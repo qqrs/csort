@@ -121,6 +121,33 @@ void inssort( int *base, size_t size )
 
 }
 
+
+void inssort2( int *base, size_t size )
+{
+    int i,j,n;
+    int temp;
+
+    if ( size < 2 ) {
+        return;
+    }
+
+    for ( i = 1; i < size; i++ )
+    {
+        temp = base[i];
+        j = i-1;
+        while ( compare( &temp, &base[j] ) < 0  && j >= 0) 
+        {
+            base[j+1] = base[j];
+            j--;
+        }
+
+        base[j+1] = temp;
+        print_data(base, size);
+    }
+
+}
+
+
 void quicksort( void *base, size_t num )
 {
     //qsort(base, num, sizeof(int), compare);
@@ -137,7 +164,7 @@ int main(int argc, char *argv[])
     print_data(data, data_len);
     printf("===\n\n");
 
-    inssort(data, data_len);
+    inssort2(data, data_len);
 
     printf("===\n\n");
     print_data(data, data_len);
