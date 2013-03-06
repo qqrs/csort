@@ -55,9 +55,9 @@ void bubblesort( int *base, size_t size )
         return;
     }
 
-    for ( i = 0; i < size; i++ )
+    for ( i = 0; i < size-1; i++ )
     {
-        for ( j = 0; j < size-i; j++ )
+        for ( j = 0; j < size-i-1; j++ )
         {
             if ( compare( &base[j], &base[j+1] ) > 0 ) {
                 swap(&base[j], &base[j+1]);
@@ -83,7 +83,11 @@ int main(int argc, char *argv[])
     //quicksort(data, data_len);
     //swap(&data[0], &data[1]);
     print_data(data, data_len);
+    printf("===\n\n");
+
     bubblesort(data, data_len);
+
+    printf("===\n\n");
     print_data(data, data_len);
 
     printf("\ncompare count: %d\n", compare_count);
