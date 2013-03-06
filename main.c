@@ -98,7 +98,7 @@ void bubblesort2( int *base, size_t size )
 
 void inssort( int *base, size_t size )
 {
-    int i,j,n;
+    int i,j;
     int temp;
 
     if ( size < 2 ) {
@@ -124,7 +124,7 @@ void inssort( int *base, size_t size )
 
 void inssort2( int *base, size_t size )
 {
-    int i,j,n;
+    int i,j;
     int temp;
 
     if ( size < 2 ) {
@@ -135,7 +135,7 @@ void inssort2( int *base, size_t size )
     {
         temp = base[i];
         j = i-1;
-        while ( compare( &temp, &base[j] ) < 0  && j >= 0) 
+        while ( j >= 0 && compare( &temp, &base[j] ) < 0 ) 
         {
             base[j+1] = base[j];
             j--;
@@ -147,10 +147,80 @@ void inssort2( int *base, size_t size )
 
 }
 
+void inssort3( int *base, size_t size )
+{
+    int temp;
+    int *a, *end, *hole;
+    end = base + size - 1;
 
-void quicksort( void *base, size_t num )
+    if ( size < 2 ) {
+        return;
+    }
+
+    for ( a = base + 1; a <= end; a++ )
+    {
+        temp = *a;
+        hole = a-1;
+        while ( hole >= base && compare( &temp, hole ) < 0 ) 
+        {
+            *(hole+1) = *hole;
+            hole--;
+        }
+
+        *(hole+1) = temp;
+        print_data(base, size);
+    }
+
+}
+
+int qs_partition( int *base, size_t size, int left, int right, int pivot )
+{
+    int pivot_value;
+    int store;
+    int i;
+
+    pivot_value = base[pivot];
+    print_data(&base[left], right-left+1);
+    swap(&base[pivot], &base[right]);
+    print_data(&base[left], right-left+1);
+
+    store = 0;
+    for ( i = 0; i < right; i++ )
+    {
+        if (compare(&base[i], &pivot_value) < 0) {
+            swap(&base[i], &base[store]);
+            store++;
+        }
+        print_data(&base[left], right-left+1);
+    }
+    swap(&base[right], &base[store]);
+    print_data(&base[left], right-left+1);
+
+    return store;
+}
+
+void qs_sort( int *base, size_t size, int left, int right )
+{
+    int pivot;
+
+    if (left >= right) {
+        return;     // only one item in the partition
+    }
+
+    pivot = (left+right)/2;     // choose a pivot
+
+    // partition around the pivot and get new index of pivot value
+    pivot = qs_partition(base, size, left, right, pivot);   
+
+    // sort both partitions
+    qs_sort(base, size, left, pivot-1);
+    qs_sort(base, size, pivot+1, right);
+}
+
+void quicksort( int *base, size_t size )
 {
     //qsort(base, num, sizeof(int), compare);
+    qs_sort(base, size, 0, size-1);
 }
 
 int main(int argc, char *argv[])
@@ -164,7 +234,7 @@ int main(int argc, char *argv[])
     print_data(data, data_len);
     printf("===\n\n");
 
-    inssort2(data, data_len);
+    quicksort(data, data_len);
 
     printf("===\n\n");
     print_data(data, data_len);
