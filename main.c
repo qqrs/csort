@@ -64,7 +64,59 @@ void bubblesort( int *base, size_t size )
             }
             print_data(base, size);
         }
+        // if no swaps on this sweep, break loop
         printf("\n");
+    }
+
+}
+
+void bubblesort2( int *base, size_t size )
+{
+    int i;
+    int *a, *b, *end;
+
+    if ( size < 2 ) {
+        return;
+    }
+    end = base + size - 1;
+
+    while (end != base)
+    {
+        for ( a = base, b = base+1; b <= end; a++, b++ )
+        {
+            if ( compare( a, b ) > 0 ) {
+                swap( a, b );
+            }
+            print_data(base, size);
+        }
+        // if no swaps on this sweep, break loop
+        printf("\n");
+        end--;
+    }
+
+}
+
+void inssort( int *base, size_t size )
+{
+    int i,j,n;
+    int temp;
+
+    if ( size < 2 ) {
+        return;
+    }
+
+    for ( i = 1; i < size; i++ )
+    {
+        temp = base[i];
+        for ( j = 1; j <= i; j++ )
+        {
+            if ( compare( &temp, &base[i-j] ) > 0 ) {
+                break;
+            }
+            base[i-j+1] = base[i-j];
+        }
+        base[i-j+1] = temp;
+        print_data(base, size);
     }
 
 }
@@ -85,7 +137,7 @@ int main(int argc, char *argv[])
     print_data(data, data_len);
     printf("===\n\n");
 
-    bubblesort(data, data_len);
+    inssort(data, data_len);
 
     printf("===\n\n");
     print_data(data, data_len);
