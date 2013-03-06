@@ -204,6 +204,39 @@ int qs_partition( int *base, size_t size, int left, int right, int pivot )
     return pivot;
 }
 
+int qs_partition2( int *base, size_t size, int left, int right, int pivot )
+{
+    int pivot_value;
+    int i,j;
+
+    pivot_value = base[pivot];
+    print_data(&base[left], right-left+1);
+
+    // walk partition from both ends and swap if on wrong side of pivot
+    i = left-1;
+    j = right+1;
+    while (1)
+    {
+        do {
+            i++;
+        } while (compare(&base[i], &pivot_value) < 0);
+        do {
+            j--;
+        } while (compare(&base[j], &pivot_value) > 0);
+
+        if (i >= j) {
+            break;
+        }
+
+        swap(&base[i], &base[j]);
+        print_data(&base[left], right-left+1);
+    }
+
+    printf("new pivot: %d\n", j);
+    // return new pivot
+    return j;
+}
+
 void qs_sort( int *base, size_t size, int left, int right )
 {
     int pivot;
@@ -214,8 +247,8 @@ void qs_sort( int *base, size_t size, int left, int right )
 
     pivot = (left+right)/2;     // choose a pivot
 
-    // partition around the pivot and get new index of pivot value
-    pivot = qs_partition(base, size, left, right, pivot);   
+    // partition around the pivot and get new pivot index
+    pivot = qs_partition2(base, size, left, right, pivot);   
 
     // sort both partitions
     qs_sort(base, size, left, pivot-1);
@@ -230,8 +263,9 @@ void quicksort( int *base, size_t size )
 
 int main(int argc, char *argv[])
 {
-    //int data[] = {1,7,2,4,6,7};
-    int data[] = {9,8,7,6,5,4,3,2,1};
+    int data[] = {1,7,2,4,6,7};
+    //int data[] = {9,8,7,6,5,4,3,2,1};
+    //int data[] = {7,5,4,6,3,2,1};
     int data_len = sizeof(data)/sizeof(data[0]);
 
     //quicksort(data, data_len);
