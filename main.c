@@ -176,27 +176,32 @@ void inssort3( int *base, size_t size )
 int qs_partition( int *base, size_t size, int left, int right, int pivot )
 {
     int pivot_value;
-    int store;
     int i;
 
     pivot_value = base[pivot];
     print_data(&base[left], right-left+1);
+
+    // move pivot value out of the way
     swap(&base[pivot], &base[right]);
     print_data(&base[left], right-left+1);
 
-    store = 0;
+    // walk partition and swap values < pivot to left side
+    pivot = 0;
     for ( i = 0; i < right; i++ )
     {
         if (compare(&base[i], &pivot_value) < 0) {
-            swap(&base[i], &base[store]);
-            store++;
+            swap(&base[i], &base[pivot]);
+            pivot++;
         }
         print_data(&base[left], right-left+1);
     }
-    swap(&base[right], &base[store]);
+
+    // move pivot value to new pivot index
+    swap(&base[right], &base[pivot]);
     print_data(&base[left], right-left+1);
 
-    return store;
+    // return new pivot
+    return pivot;
 }
 
 void qs_sort( int *base, size_t size, int left, int right )
