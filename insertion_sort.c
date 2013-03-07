@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "sortutils.h"
 
-void inssort( int *base, size_t size )
+void inssort( int *base, uint32_t size )
 {
-    int i,j;
+    uint32_t i,j;
     int temp;
 
     if ( size < 2 ) {
@@ -29,9 +30,10 @@ void inssort( int *base, size_t size )
 }
 
 
-void inssort2( int *base, size_t size )
+void inssort2( int *base, uint32_t size )
 {
-    int i,j;
+    uint32_t i;
+    int32_t j;
     int temp;
 
     if ( size < 2 ) {
@@ -54,7 +56,7 @@ void inssort2( int *base, size_t size )
 
 }
 
-void inssort3( int *base, size_t size )
+void inssort3( int *base, uint32_t size )
 {
     int temp;
     int *a, *end, *hole;

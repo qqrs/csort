@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "sortutils.h"
 
-int qs_partition( int *base, size_t size, int left, int right, int pivot )
+int qs_partition( int *base, uint32_t size, uint32_t left, uint32_t right, 
+                    uint32_t pivot )
 {
     int pivot_value;
-    int i;
 
     pivot_value = base[pivot];
     print_data(&base[left], right-left+1);
@@ -17,7 +18,7 @@ int qs_partition( int *base, size_t size, int left, int right, int pivot )
 
     // walk partition and swap values < pivot to left side
     pivot = 0;
-    for ( i = 0; i < right; i++ )
+    for ( uint32_t i = 0; i < right; i++ )
     {
         if (compare(&base[i], &pivot_value) < 0) {
             swap(&base[i], &base[pivot]);
@@ -34,10 +35,10 @@ int qs_partition( int *base, size_t size, int left, int right, int pivot )
     return pivot;
 }
 
-int qs_partition2( int *base, size_t size, int left, int right, int pivot )
+int qs_partition2( int *base, uint32_t size, int left, int right, int pivot )
 {
     int pivot_value;
-    int i,j;
+    uint32_t i,j;
 
     pivot_value = base[pivot];
     print_data(&base[left], right-left+1);
@@ -67,7 +68,7 @@ int qs_partition2( int *base, size_t size, int left, int right, int pivot )
     return j;
 }
 
-void qs_sort( int *base, size_t size, int left, int right )
+void qs_sort( int *base, uint32_t size, int left, int right )
 {
     int pivot;
 
@@ -85,7 +86,7 @@ void qs_sort( int *base, size_t size, int left, int right )
     qs_sort(base, size, pivot+1, right);
 }
 
-void quicksort( int *base, size_t size )
+void quicksort( int *base, uint32_t size )
 {
     //qsort(base, num, sizeof(int), compare);
     qs_sort(base, size, 0, size-1);

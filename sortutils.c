@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 int compare(const int *a, const int *b)
 {
@@ -14,7 +15,7 @@ int compare(const int *a, const int *b)
     return 0;
 }
 
-int swap(int *a, int *b)
+void swap(int *a, int *b)
 {
     int t;
 
@@ -23,9 +24,9 @@ int swap(int *a, int *b)
     *b = t;
 }
 
-void print_data( int *base, size_t size )
+void print_data( int *base, uint32_t size )
 {
-    int i;
+    uint32_t i;
 
     for ( i = 0; i < size; i++ ) {
         printf("%d ", base[i]);

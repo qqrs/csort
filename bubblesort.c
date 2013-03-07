@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "sortutils.h"
 
-void bubblesort( int *base, size_t size )
+void bubblesort( int *base, uint32_t size )
 {
-    int i,j,n;
+    uint32_t i,j;
 
     if ( size < 2 ) {
         return;
@@ -27,9 +28,8 @@ void bubblesort( int *base, size_t size )
 }
 
 
-void bubblesort2( int *base, size_t size )
+void bubblesort2( int *base, uint32_t size )
 {
-    int i;
     int *a, *b, *end;
 
     if ( size < 2 ) {
