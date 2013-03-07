@@ -1,12 +1,13 @@
-CC = gcc -g
-OBJECTS = main.o 
+CC=gcc
+CFLAGS=-Wall -Wextra -g -ggdb -std=c99 -O2
 BINARY = csort
+CSOURCE = main.c
 
 all: csort
 
 csort: $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(BINARY)
+	$(CC) $(CFLAGS) -o $(BINARY) $(CSOURCE) 
 
+.PHONY:clean
 clean:
 	rm -f $(BINARY) $(OBJECTS)
-
