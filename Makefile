@@ -5,7 +5,7 @@ CSOURCE = main.c sortutils.c bubblesort.c insertion_sort.c quicksort.c
 
 all: csort
 
-csort: $(OBJECTS)
+csort: $(CSOURCE)
 	$(CC) $(CFLAGS) -o $(BINARY) $(CSOURCE) 
 
 .PHONY:clean
