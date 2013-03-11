@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     } else if ( argc == 1 ) {
         // run tests defined in test.c
-        runtests();
+        test_sorts();
     } else {
         // sort list provided on command line
         list_size = argc - 1;
@@ -57,24 +57,3 @@ int main(int argc, char *argv[])
     exit(EXIT_SUCCESS);
 }
 
-    /*
-{
-    int data[] = {1,7,2,4,6,7};
-    //int data[] = {9,8,7,6,5,4,3,2,1};
-    //int data[] = {7,5,4,6,3,2,1};
-    int data_len = sizeof(data)/sizeof(data[0]);
-    //quicksort(data, data_len);
-    //swap(&data[0], &data[1]);
-    print_data(data, data_len);
-    printf("===\n\n");
-
-    quicksort(data, data_len);
-
-    printf("===\n\n");
-    print_data(data, data_len);
-
-    printf("\ncompare count: %d\n", compare_count);
-
-    return EXIT_SUCCESS;
-}
-    */
