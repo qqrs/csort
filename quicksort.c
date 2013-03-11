@@ -21,7 +21,8 @@ int qs_partition( int *base, uint32_t size, uint32_t left, uint32_t right,
 
     // walk partition and swap values < pivot to left side
     pivot = 0;
-    for ( uint32_t i = 0; i < right; i++ )
+    //for ( uint32_t i = 0; i < right; i++ )
+    for ( uint32_t i = left; i < right; i++ )
     {
         if (compare(&base[i], &pivot_value) < 0) {
             swap(&base[i], &base[pivot]);

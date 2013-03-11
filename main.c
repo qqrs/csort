@@ -16,8 +16,10 @@ int main(int argc, char *argv[])
     if ( argc <= 0 ) {
         exit(EXIT_FAILURE);
     } else if ( argc == 1 ) {
-        // run tests
+        // run tests defined in test.c
+        runtests();
     } else {
+        // sort list provided on command line
         list_size = argc - 1;
 
         list = malloc( list_size * sizeof(int) );
@@ -44,7 +46,8 @@ int main(int argc, char *argv[])
         dbgprintf("sort-under-test: ");
         dbgprintl(list_sort, list_size);
 
-        if ( memcmp(list_sort, list_stdsort, list_size*sizeof(int)) == 0 ) {
+        //if ( memcmp(list_sort, list_stdsort, list_size*sizeof(int)) == 0 ) {
+        if ( cmplist(list_sort, list_stdsort, list_size, &cmpint) == 0 ) {
             printf("sort OK\n");
         } else {
             printf("sort FAILED\n");

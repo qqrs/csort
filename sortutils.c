@@ -6,6 +6,22 @@
 
 //static int compare_count = 0;
 
+// compare two lists of same size
+int cmplist(const int *a, const int *b, size_t size,
+                int (*cmp)(const void*,const void*) )
+{
+    int result;
+    for (uint32_t i = 0; i < size; i++)
+    {
+        result = (*cmp)(&a[i], &b[i]);
+        if (result != 0) {
+            return result;
+        }
+    }
+
+    return 0;
+}
+
 void stdsort( int *base, uint32_t size )
 {
     qsort(base, size, sizeof(int), cmpint);
