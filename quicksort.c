@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <assert.h>
 
 #include "sortutils.h"
 
@@ -8,6 +9,8 @@ int qs_partition( int *base, uint32_t size, uint32_t left, uint32_t right,
                     uint32_t pivot )
 {
     int pivot_value;
+
+    assert(right <= size);
 
     pivot_value = base[pivot];
     dbgprintl(&base[left], right-left+1);
@@ -35,10 +38,13 @@ int qs_partition( int *base, uint32_t size, uint32_t left, uint32_t right,
     return pivot;
 }
 
-int qs_partition2( int *base, uint32_t size, int left, int right, int pivot )
+int qs_partition2( int *base, uint32_t size, uint32_t left, uint32_t right, 
+                    uint32_t pivot )
 {
     int pivot_value;
     uint32_t i,j;
+
+    assert(right <= size);
 
     pivot_value = base[pivot];
     dbgprintl(&base[left], right-left+1);

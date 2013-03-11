@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "sort.h"
 #include "sortutils.h"
@@ -26,7 +27,7 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        for (int i = 0; i < list_size; i++) {
+        for (uint32_t i = 0; i < list_size; i++) {
             list[i] = atoi(argv[i+1]);
         }
         memcpy(list_sort, list, list_size*sizeof(int));
