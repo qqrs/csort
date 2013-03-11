@@ -19,10 +19,10 @@ void bubblesort( int *base, uint32_t size )
             if ( compare( &base[j], &base[j+1] ) > 0 ) {
                 swap(&base[j], &base[j+1]);
             }
-            print_data(base, size);
+            dbgprintl(base, size);
         }
         // if no swaps on this sweep, break loop
-        printf("\n");
+        dbgprintf("\n");
     }
 
 }
@@ -44,10 +44,10 @@ void bubblesort2( int *base, uint32_t size )
             if ( compare( a, b ) > 0 ) {
                 swap( a, b );
             }
-            print_data(base, size);
+            dbgprintl(base, size);
         }
         // if no swaps on this sweep, break loop
-        printf("\n");
+        dbgprintf("\n");
         end--;
     }
 

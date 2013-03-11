@@ -10,11 +10,11 @@ int qs_partition( int *base, uint32_t size, uint32_t left, uint32_t right,
     int pivot_value;
 
     pivot_value = base[pivot];
-    print_data(&base[left], right-left+1);
+    dbgprintl(&base[left], right-left+1);
 
     // move pivot value out of the way
     swap(&base[pivot], &base[right]);
-    print_data(&base[left], right-left+1);
+    dbgprintl(&base[left], right-left+1);
 
     // walk partition and swap values < pivot to left side
     pivot = 0;
@@ -24,12 +24,12 @@ int qs_partition( int *base, uint32_t size, uint32_t left, uint32_t right,
             swap(&base[i], &base[pivot]);
             pivot++;
         }
-        print_data(&base[left], right-left+1);
+        dbgprintl(&base[left], right-left+1);
     }
 
     // move pivot value to new pivot index
     swap(&base[right], &base[pivot]);
-    print_data(&base[left], right-left+1);
+    dbgprintl(&base[left], right-left+1);
 
     // return new pivot
     return pivot;
@@ -41,7 +41,7 @@ int qs_partition2( int *base, uint32_t size, int left, int right, int pivot )
     uint32_t i,j;
 
     pivot_value = base[pivot];
-    print_data(&base[left], right-left+1);
+    dbgprintl(&base[left], right-left+1);
 
     // walk partition from both ends and swap if on wrong side of pivot
     i = left-1;
@@ -60,10 +60,10 @@ int qs_partition2( int *base, uint32_t size, int left, int right, int pivot )
         }
 
         swap(&base[i], &base[j]);
-        print_data(&base[left], right-left+1);
+        dbgprintl(&base[left], right-left+1);
     }
 
-    printf("new pivot: %d\n", j);
+    dbgprintf("new pivot: %d\n", j);
     // return new pivot
     return j;
 }

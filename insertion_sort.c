@@ -24,7 +24,7 @@ void inssort( int *base, uint32_t size )
             base[i-j+1] = base[i-j];
         }
         base[i-j+1] = temp;
-        print_data(base, size);
+        dbgprintl(base, size);
     }
 
 }
@@ -51,7 +51,7 @@ void inssort2( int *base, uint32_t size )
         }
 
         base[j+1] = temp;
-        print_data(base, size);
+        dbgprintl(base, size);
     }
 
 }
@@ -77,7 +77,7 @@ void inssort3( int *base, uint32_t size )
         }
 
         *(hole+1) = temp;
-        print_data(base, size);
+        dbgprintl(base, size);
     }
 
 }
