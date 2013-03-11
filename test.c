@@ -65,22 +65,16 @@ int runtests(sortfn_t sortfn)
     uint32_t list_size;
     struct testitem_s *test;
 
+    int failures;
+
     list_sort = buf_sort;
     list_stdsort = buf_stdsort;
 
-    //test = &test_cases[0];
+    failures = 0;
     for (test = test_cases; test->list != NULL; test++)
     {
         list_size = test->len * test->esize;
         assert(list_size <= MAX_LIST_SIZE);
-
-        /*
-        list_sort = malloc(list_size);
-        list_stdsort = malloc(list_size);
-        if ( !list_sort || !list_stdsort ) { 
-            exit(EXIT_FAILURE);
-        }
-        */
 
         memcpy( list_sort, test->list, list_size );
         memcpy( list_stdsort, test->list, list_size );
@@ -91,21 +85,15 @@ int runtests(sortfn_t sortfn)
 
         stdsort(list_stdsort, test->len );
 
-        /*
-        dbgprintf("\n\n");
-        dbgprintf("unsorted:        ");
-        dbgprintl(test->list, test->len );
-        dbgprintf("stdlib qsort:    ");
-        dbgprintl(list_stdsort, test->len );
-        dbgprintf("sort-under-test: ");
-        dbgprintl(list_sort, test->len );
-        */
-
         //if ( memcmp(list_sort, list_stdsort, list_size) == 0 ) {
         if ( cmplist(list_sort, list_stdsort, test->len, test->cmp) == 0 ) {
-            printf("OK:   ");
-            printl(test->list, test->len);
+            // printf("OK:   ");
+            // printl(test->list, test->len);
         } else {
+            failures++;
+            if (failures == 1) {
+                printf("\n");
+            }
             printf("FAIL: ");
             printl(test->list, test->len);
             printf("   >: ");
@@ -113,7 +101,10 @@ int runtests(sortfn_t sortfn)
         }
     }
 
-    return 0;
+    if ( failures == 0 ) {
+        printf("OK\n");
+    }
+    return failures;
 }
 
 // run tests for all sort functions
@@ -123,7 +114,7 @@ int test_sorts( void )
 
     for ( s = sort_definitions; s->sortfn; s++ )
     {
-        printf("\n%s:\n", s->name);
+        printf("%s: ", s->name);
         runtests(s->sortfn);
     }
 
