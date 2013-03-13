@@ -44,6 +44,10 @@ static int test_pow2    [] = {8,7,6,5,4,3,2,1};
 static int test_sorted  [] = {1,2,3,4,5};
 static int test_dup     [] = {2,2,2,2,2};
 static int test_ilv     [] = {1,5,2,4,3};
+static int test_rand    [] = {7,9,3,2,6,7,1,4,9,4,1,2,7,2,8,4,
+                              6,6,9,3,5,2,5,3,4,8,2,8,3,9,2,7,
+                              8,3,3,7,7,2,8,3,4,9,3,7,5,4,4,6,
+                              5,9,5,1,3,1,1,4,7,2,1,8,3,1,5,2};
 
 #define TEST_ITEM(x)  { x, #x, (sizeof(x)/sizeof(x[0])), sizeof(x[0]), &cmpint }
 static struct testitem_s test_cases[] = {
@@ -53,13 +57,15 @@ static struct testitem_s test_cases[] = {
     TEST_ITEM( test_sorted   ),
     TEST_ITEM( test_dup      ),
     TEST_ITEM( test_ilv      ),
+    TEST_ITEM( test_rand     ),
     {NULL, NULL, 0, 0, NULL}
 };
 
 // =============================================================================
 
-// use static buffers rather than allocating on heap for consistent timing
-#define MAX_LIST_SIZE   16*sizeof(int)
+// TODO: use stack buffers rather than allocating on heap for consistent timing?
+//       or build timing into the test framework?
+#define MAX_LIST_SIZE   64*sizeof(int)
 static uint8_t buf_sort[MAX_LIST_SIZE];
 static uint8_t buf_stdsort[MAX_LIST_SIZE];
 
@@ -129,6 +135,7 @@ int test_sorts( void )
 
 // =============================================================================
 
+//TODO: free heap memory
 void sort_cmdline_list(int argc, char *argv[])
 {
     int *list;
@@ -140,11 +147,13 @@ void sort_cmdline_list(int argc, char *argv[])
     for ( s = sort_definitions; s->sortfn != NULL; s++ )
     {
         if ( strcmp(s->name, argv[1]) == 0 ) {
-            printf("found sortfn %s\n", s->name);
             break;
         }
     }
-    assert( s->sortfn != NULL );
+    if ( s->sortfn == NULL ) {
+        printf("sort function not found: %s\n", argv[1]);
+        exit(EXIT_FAILURE);
+    }
 
     list_size = argc - 2;
 
@@ -161,8 +170,8 @@ void sort_cmdline_list(int argc, char *argv[])
     memcpy(list_sort, list, list_size*sizeof(int));
     memcpy(list_stdsort, list, list_size*sizeof(int));
 
-    sort_under_test(list_sort, list_size);
-    //(*s->sortfn)(list_sort, list_size);
+    //sort_under_test(list_sort, list_size);
+    (*s->sortfn)(list_sort, list_size);
     stdsort(list_stdsort, list_size);
 
     dbgprintf("\n\n");

@@ -14,6 +14,7 @@ void inssort2( int *base, uint32_t size );
 void inssort3( int *base, uint32_t size );
 void quicksort( int *base, uint32_t size );
 void quicksort2( int *base, uint32_t size );
+void quicksort3( int *base, uint32_t size );
 
 
 int test_sorts(void);
