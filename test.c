@@ -65,28 +65,47 @@ static struct testitem_s test_cases[] = {
 
 // TODO: use stack buffers rather than allocating on heap for consistent timing?
 //       or build timing into the test framework?
-#define MAX_LIST_SIZE   64*sizeof(int)
-static uint8_t buf_sort[MAX_LIST_SIZE];
-static uint8_t buf_stdsort[MAX_LIST_SIZE];
+//#define MAX_LIST_SIZE   64*sizeof(int)
+//static uint8_t buf_sort[MAX_LIST_SIZE];
+//static uint8_t buf_stdsort[MAX_LIST_SIZE];
 
 // run test cases for a single sort function
 int runtests(sortfn_t sortfn)
 {
     void *list_sort;
     void *list_stdsort;
+    size_t list_sort_size;
+    size_t list_stdsort_size;
     uint32_t list_size;
     struct testitem_s *test;
 
     int failures;
 
-    list_sort = buf_sort;
-    list_stdsort = buf_stdsort;
+    list_sort = NULL;
+    list_stdsort = NULL;
+    list_sort_size = 0;
+    list_stdsort_size = 0;
 
     failures = 0;
+
     for (test = test_cases; test->list != NULL; test++)
     {
         list_size = test->len * test->esize;
-        assert(list_size <= MAX_LIST_SIZE);
+        //assert(list_size <= MAX_LIST_SIZE);
+
+        if (list_size > list_sort_size) {
+            list_sort = realloc(list_sort, list_size);
+            list_sort_size = list_size;
+        }
+        if (list_size > list_stdsort_size) {
+            list_stdsort = realloc(list_stdsort, list_size);
+            list_stdsort_size = list_size;
+        }
+        if ( !list_sort || !list_stdsort ) { 
+            free(list_sort);
+            free(list_stdsort);
+            exit(EXIT_FAILURE);
+        }
 
         memcpy( list_sort, test->list, list_size );
         memcpy( list_stdsort, test->list, list_size );
@@ -97,7 +116,7 @@ int runtests(sortfn_t sortfn)
 
         stdsort(list_stdsort, test->len );
 
-        //if ( memcmp(list_sort, list_stdsort, list_size) == 0 ) {
+        //if ( memcmp(list_sort, list_stdsort, list_size) == 0 ) 
         if ( cmplist(list_sort, list_stdsort, test->len, test->cmp) == 0 ) {
             // printf("OK:   ");
             // printl(test->list, test->len);
@@ -116,6 +135,9 @@ int runtests(sortfn_t sortfn)
     if ( failures == 0 ) {
         printf("OK\n");
     }
+
+    free(list_sort);
+    free(list_stdsort);
     return failures;
 }
 
@@ -135,7 +157,6 @@ int test_sorts( void )
 
 // =============================================================================
 
-//TODO: free heap memory
 void sort_cmdline_list(int argc, char *argv[])
 {
     int *list;
@@ -161,6 +182,9 @@ void sort_cmdline_list(int argc, char *argv[])
     list_sort = malloc( list_size * sizeof(int) );
     list_stdsort = malloc( list_size * sizeof(int) );
     if (!list || !list_sort || !list_stdsort) { 
+        free(list);
+        free(list_sort);
+        free(list_stdsort);
         exit(EXIT_FAILURE);
     }
 
@@ -188,4 +212,8 @@ void sort_cmdline_list(int argc, char *argv[])
     } else {
         printf("sort FAILED\n");
     }
+
+    free(list);
+    free(list_sort);
+    free(list_stdsort);
 }
