@@ -24,6 +24,8 @@ static struct sortdef_s sort_definitions[] = {
     SORT_DEF( inssort3          ),
     SORT_DEF( quicksort         ),
     SORT_DEF( quicksort2        ),
+    SORT_DEF( mergesort         ),
+    SORT_DEF( heapsort          ),
     { NULL, NULL },
 };
 
@@ -70,7 +72,7 @@ static struct testitem_s test_cases[] = {
 //static uint8_t buf_stdsort[MAX_LIST_SIZE];
 
 // run test cases for a single sort function
-int runtests(sortfn_t sortfn)
+int test_sort(sortfn_t sortfn)
 {
     void *list_sort;
     void *list_stdsort;
@@ -149,7 +151,7 @@ int test_sorts( void )
     for ( s = sort_definitions; s->sortfn != NULL; s++ )
     {
         printf("%s: ", s->name);
-        runtests(s->sortfn);
+        test_sort(s->sortfn);
     }
 
     return 0;
@@ -157,7 +159,7 @@ int test_sorts( void )
 
 // =============================================================================
 
-void sort_cmdline_list(int argc, char *argv[])
+void test_cmdline_list(int argc, char *argv[])
 {
     int *list;
     int *list_sort;

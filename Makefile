@@ -2,7 +2,16 @@ CC=gcc
 CFLAGS=-Wall -Wextra -g -ggdb -std=c99 -O2
 BINARY = csort
 DEBUG_BINARY = csort-debug
-CSOURCE = main.c test.c sortutils.c bubblesort.c insertion_sort.c quicksort.c
+
+CSOURCE = 	main.c \
+		  	test.c \
+		  	sortutils.c \
+		  	bubblesort.c \
+		  	insertion_sort.c \
+			quicksort.c \
+			mergesort.c \
+			heapsort.c
+
 CINCLUDE = sort.h sortutils.h
 
 all: csort

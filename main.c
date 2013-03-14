@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     } else {
         // csort <sort_function> <list...>
-        sort_cmdline_list(argc, argv);
+        test_cmdline_list(argc, argv);
     }
 
     exit(EXIT_SUCCESS);

@@ -15,10 +15,11 @@ void inssort3( int *base, uint32_t size );
 void quicksort( int *base, uint32_t size );
 void quicksort2( int *base, uint32_t size );
 void quicksort3( int *base, uint32_t size );
+void mergesort( int *base, uint32_t size );
+void heapsort( int *base, uint32_t size );
 
 
 int test_sorts(void);
-int runtests(sortfn_t sortfn);
-void sort_cmdline_list(int argc, char *argv[]);
+void test_cmdline_list(int argc, char *argv[]);
 
 #endif
