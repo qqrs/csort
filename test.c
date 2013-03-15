@@ -4,6 +4,7 @@
 #include <string.h>
 #include <assert.h>
 #include <time.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #include "sort.h"
@@ -171,7 +172,7 @@ int benchmark_sorts( void )
     struct sortdef_s *s;
     uint32_t len, esize;
     int *list_raw, *list_sort, *list_stdsort;
-    clock_t start_time, end_time; 
+    struct timespec start_time, end_time; 
     float min_time, sort_time, stdsort_time;
 
     // allocate a buffer for test data
@@ -195,11 +196,13 @@ int benchmark_sorts( void )
 
     // sort using stdlib qsort
     memcpy(list_stdsort, list_raw, len*esize);
-    start_time = clock();
+	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
     stdsort(list_stdsort, len);
-    end_time = clock();
-    stdsort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
-    printf("%u %u %f\n", start_time, end_time, stdsort_time);
+	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
+    //stdsort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
+    //stdsort_time = (((float)end_time.tv_sec - end_time.tv_sec) \
+                    //+ ((float)end_time.tv_nsec - end_time.tv_nsec)/1e9);
+    //printf("%u %u %f\n", start_time, end_time, stdsort_time);
 
     for ( s = sort_definitions; s->sortfn != NULL; s++ )
     {
@@ -209,14 +212,14 @@ int benchmark_sorts( void )
         {
             memcpy(list_sort, list_raw, len*esize);
 
-            start_time = clock();
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
             (*s->sortfn)(list_sort, len);
-            end_time = clock();
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
-            sort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
+            //sort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
             if ( cmplist(list_sort, list_stdsort, len, &cmpint) == 0 ) {
                 if (i == 0 || sort_time < min_time) {
-                    min_time = sort_time;
+                    //min_time = sort_time;
                 }
             } else {
                 break;
@@ -227,7 +230,7 @@ int benchmark_sorts( void )
             printf("FAIL\n");
         } else {
             printf("OK ");
-            printf("%u %u %f\n", start_time, end_time, sort_time);
+            //printf("%u %u %f\n", start_time, end_time, sort_time);
         }
 
 
