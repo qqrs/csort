@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -g -ggdb -std=c99 -O2
+CFLAGS=-Wall -Wextra -g -ggdb -std=c99 -O2 -D_BSD_SOURCE
 BINARY = csort
 DEBUG_BINARY = csort-debug
 

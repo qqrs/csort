@@ -3,8 +3,10 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
-#include <time.h>
 #include <unistd.h>
+
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include "sort.h"
 #include "sortutils.h"
@@ -19,15 +21,15 @@ struct sortdef_s {
 
 #define SORT_DEF(x) { &(x), #x }
 static struct sortdef_s sort_definitions[] = {
-    /*SORT_DEF( bubblesort        ),
-    SORT_DEF( bubblesort2       ),
-    SORT_DEF( inssort           ),
-    SORT_DEF( inssort2          ),
-    SORT_DEF( inssort3          ),
-    */SORT_DEF( quicksort         ),
+    SORT_DEF( quicksort         ),
     SORT_DEF( quicksort2        ),
     SORT_DEF( mergesort         ),
     SORT_DEF( heapsort          ),
+    SORT_DEF( inssort           ),
+    SORT_DEF( inssort2          ),
+    SORT_DEF( inssort3          ),
+    SORT_DEF( bubblesort        ),
+    SORT_DEF( bubblesort2       ),
     { NULL, NULL },
 };
 
@@ -161,9 +163,16 @@ int test_sorts( void )
 
 // =============================================================================
 
+double get_time()
+{
+    struct timeval t;
+    struct timezone tzp;
+    gettimeofday(&t, &tzp);
+    return t.tv_sec + t.tv_usec*1e-6;
+}
 
 // run benchmark for all sort functions
-#define MAX_TEST_DATA 20000
+#define MAX_TEST_DATA 1000000
 #define TEST_REPEAT 10
 int benchmark_sorts( void )
 {
@@ -171,8 +180,8 @@ int benchmark_sorts( void )
     struct sortdef_s *s;
     uint32_t len, esize;
     int *list_raw, *list_sort, *list_stdsort;
-    clock_t start_time, end_time; 
-    float min_time, sort_time, stdsort_time;
+    double start_time, end_time; 
+    double min_time, sort_time, stdsort_time;
 
     // allocate a buffer for test data
     len = MAX_TEST_DATA;
@@ -188,18 +197,20 @@ int benchmark_sorts( void )
     }
 
     // generate test data
+    srand(398149);
     for (uint32_t i = 0; i < len; i++)
     {
         list_raw[i] = rand();
     }
 
     // sort using stdlib qsort
+    printf("%16.16s: ", "stdlib qsort");
     memcpy(list_stdsort, list_raw, len*esize);
-    start_time = clock();
+    start_time = get_time();
     stdsort(list_stdsort, len);
-    end_time = clock();
-    stdsort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
-    printf("%u %u %f\n", start_time, end_time, stdsort_time);
+    end_time = get_time();
+    stdsort_time = 1000.0*(end_time - start_time);
+    printf("%6.2f ms\n", stdsort_time);
 
     for ( s = sort_definitions; s->sortfn != NULL; s++ )
     {
@@ -209,11 +220,11 @@ int benchmark_sorts( void )
         {
             memcpy(list_sort, list_raw, len*esize);
 
-            start_time = clock();
+            start_time = get_time();
             (*s->sortfn)(list_sort, len);
-            end_time = clock();
+            end_time = get_time();
 
-            sort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
+            sort_time = 1000.0*(end_time - start_time);
             if ( cmplist(list_sort, list_stdsort, len, &cmpint) == 0 ) {
                 if (i == 0 || sort_time < min_time) {
                     min_time = sort_time;
@@ -226,8 +237,7 @@ int benchmark_sorts( void )
         if (i != TEST_REPEAT) {
             printf("FAIL\n");
         } else {
-            printf("OK ");
-            printf("%u %u %f\n", start_time, end_time, sort_time);
+            printf("%6.2f ms  %.2f\n", min_time, min_time/stdsort_time);
         }
 
 
