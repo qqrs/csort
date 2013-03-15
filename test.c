@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "sort.h"
 #include "sortutils.h"
@@ -17,12 +19,12 @@ struct sortdef_s {
 
 #define SORT_DEF(x) { &(x), #x }
 static struct sortdef_s sort_definitions[] = {
-    SORT_DEF( bubblesort        ),
+    /*SORT_DEF( bubblesort        ),
     SORT_DEF( bubblesort2       ),
     SORT_DEF( inssort           ),
     SORT_DEF( inssort2          ),
     SORT_DEF( inssort3          ),
-    SORT_DEF( quicksort         ),
+    */SORT_DEF( quicksort         ),
     SORT_DEF( quicksort2        ),
     SORT_DEF( mergesort         ),
     SORT_DEF( heapsort          ),
@@ -152,6 +154,83 @@ int test_sorts( void )
     {
         printf("%s: ", s->name);
         test_sort(s->sortfn);
+    }
+
+    return 0;
+}
+
+// =============================================================================
+
+
+// run benchmark for all sort functions
+#define MAX_TEST_DATA 20000
+#define TEST_REPEAT 10
+int benchmark_sorts( void )
+{
+    uint32_t i;
+    struct sortdef_s *s;
+    uint32_t len, esize;
+    int *list_raw, *list_sort, *list_stdsort;
+    clock_t start_time, end_time; 
+    float min_time, sort_time, stdsort_time;
+
+    // allocate a buffer for test data
+    len = MAX_TEST_DATA;
+    esize = sizeof(int);
+    list_raw = malloc(len*esize);
+    list_sort = malloc(len*esize);
+    list_stdsort = malloc(len*esize);
+    if (!list_raw || !list_sort || !list_stdsort) {
+        free(list_raw);
+        free(list_sort);
+        free(list_stdsort);
+        return EXIT_FAILURE;
+    }
+
+    // generate test data
+    for (uint32_t i = 0; i < len; i++)
+    {
+        list_raw[i] = rand();
+    }
+
+    // sort using stdlib qsort
+    memcpy(list_stdsort, list_raw, len*esize);
+    start_time = clock();
+    stdsort(list_stdsort, len);
+    end_time = clock();
+    stdsort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
+    printf("%u %u %f\n", start_time, end_time, stdsort_time);
+
+    for ( s = sort_definitions; s->sortfn != NULL; s++ )
+    {
+        printf("%16.16s: ", s->name);
+
+        for ( i = 0; i < TEST_REPEAT; i++ )
+        {
+            memcpy(list_sort, list_raw, len*esize);
+
+            start_time = clock();
+            (*s->sortfn)(list_sort, len);
+            end_time = clock();
+
+            sort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
+            if ( cmplist(list_sort, list_stdsort, len, &cmpint) == 0 ) {
+                if (i == 0 || sort_time < min_time) {
+                    min_time = sort_time;
+                }
+            } else {
+                break;
+            }
+        }
+
+        if (i != TEST_REPEAT) {
+            printf("FAIL\n");
+        } else {
+            printf("OK ");
+            printf("%u %u %f\n", start_time, end_time, sort_time);
+        }
+
+
     }
 
     return 0;

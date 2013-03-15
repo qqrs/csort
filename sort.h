@@ -20,6 +20,7 @@ void heapsort( int *base, uint32_t size );
 
 
 int test_sorts(void);
+int benchmark_sorts(void);
 void test_cmdline_list(int argc, char *argv[]);
 
 #endif
