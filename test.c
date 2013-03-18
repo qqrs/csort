@@ -172,7 +172,7 @@ double get_time()
 }
 
 // run benchmark for all sort functions
-#define MAX_TEST_DATA 1000000
+#define MAX_TEST_DATA 10000
 #define TEST_REPEAT 10
 int benchmark_sorts( void )
 {
