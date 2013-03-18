@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -g -ggdb -std=c99 -O2 -lrt -D_POSIX_C_SOURCE=199309L
+CFLAGS=-Wall -Wextra -g -ggdb -std=c99 -O2 -D_POSIX_C_SOURCE=199309L
+POSTFLAGS=-lrt 
 BINARY = csort
 DEBUG_BINARY = csort-debug
 
@@ -17,10 +18,10 @@ CINCLUDE = sort.h sortutils.h
 all: csort
 
 csort: $(CSOURCE) $(CINCLUDE)
-	$(CC) $(CFLAGS) -o $(BINARY) $(CSOURCE) 
+	$(CC) $(CFLAGS) -o $(BINARY) $(CSOURCE) $(POSTFLAGS)
 
 debug: $(CSOURCE) $(CINCLUDE)
-	$(CC) $(CFLAGS) -DDEBUG -o $(DEBUG_BINARY) $(CSOURCE) 
+	$(CC) $(CFLAGS) -DDEBUG -o $(DEBUG_BINARY) $(CSOURCE) $(POSTFLAGS)
 
 .PHONY:clean
 clean:

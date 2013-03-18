@@ -4,7 +4,6 @@
 #include <string.h>
 #include <assert.h>
 #include <time.h>
-#include <sys/time.h>
 #include <unistd.h>
 
 #include "sort.h"
@@ -20,12 +19,12 @@ struct sortdef_s {
 
 #define SORT_DEF(x) { &(x), #x }
 static struct sortdef_s sort_definitions[] = {
-    /*SORT_DEF( bubblesort        ),
+    SORT_DEF( bubblesort        ),
     SORT_DEF( bubblesort2       ),
     SORT_DEF( inssort           ),
     SORT_DEF( inssort2          ),
     SORT_DEF( inssort3          ),
-    */SORT_DEF( quicksort         ),
+    SORT_DEF( quicksort         ),
     SORT_DEF( quicksort2        ),
     SORT_DEF( mergesort         ),
     SORT_DEF( heapsort          ),
@@ -200,9 +199,9 @@ int benchmark_sorts( void )
     stdsort(list_stdsort, len);
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
     //stdsort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
-    //stdsort_time = (((float)end_time.tv_sec - end_time.tv_sec) \
-                    //+ ((float)end_time.tv_nsec - end_time.tv_nsec)/1e9);
-    //printf("%u %u %f\n", start_time, end_time, stdsort_time);
+    stdsort_time = (((float)end_time.tv_sec - start_time.tv_sec) \
+                    + ((float)end_time.tv_nsec - start_time.tv_nsec)/1e9);
+    printf("%f\n", stdsort_time);
 
     for ( s = sort_definitions; s->sortfn != NULL; s++ )
     {
@@ -217,9 +216,11 @@ int benchmark_sorts( void )
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
             //sort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
+            sort_time = (((float)end_time.tv_sec - start_time.tv_sec) \
+                    + ((float)end_time.tv_nsec - start_time.tv_nsec)/1e9);
             if ( cmplist(list_sort, list_stdsort, len, &cmpint) == 0 ) {
                 if (i == 0 || sort_time < min_time) {
-                    //min_time = sort_time;
+                    min_time = sort_time;
                 }
             } else {
                 break;
@@ -230,7 +231,7 @@ int benchmark_sorts( void )
             printf("FAIL\n");
         } else {
             printf("OK ");
-            //printf("%u %u %f\n", start_time, end_time, sort_time);
+            printf("%f\n", sort_time);
         }
 
 
