@@ -3,10 +3,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
+#include <time.h>
 #include <unistd.h>
-
-#include <sys/time.h>
-#include <sys/resource.h>
 
 #include "sort.h"
 #include "sortutils.h"
@@ -163,24 +161,17 @@ int test_sorts( void )
 
 // =============================================================================
 
-double get_time()
-{
-    struct timeval t;
-    struct timezone tzp;
-    gettimeofday(&t, &tzp);
-    return t.tv_sec + t.tv_usec*1e-6;
-}
 
 // run benchmark for all sort functions
-#define MAX_TEST_DATA 10000
-#define TEST_REPEAT 10
+#define MAX_TEST_DATA 100000
+#define TEST_REPEAT 3
 int benchmark_sorts( void )
 {
     uint32_t i;
     struct sortdef_s *s;
     uint32_t len, esize;
     int *list_raw, *list_sort, *list_stdsort;
-    double start_time, end_time; 
+    struct timespec start_time, end_time; 
     double min_time, sort_time, stdsort_time;
 
     // allocate a buffer for test data
@@ -206,10 +197,11 @@ int benchmark_sorts( void )
     // sort using stdlib qsort
     printf("%16.16s: ", "stdlib qsort");
     memcpy(list_stdsort, list_raw, len*esize);
-    start_time = get_time();
+	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
     stdsort(list_stdsort, len);
-    end_time = get_time();
-    stdsort_time = 1000.0*(end_time - start_time);
+	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
+    stdsort_time = (((double)end_time.tv_sec - start_time.tv_sec)*1e3 \
+                    + ((double)end_time.tv_nsec - start_time.tv_nsec)/1e6);
     printf("%6.2f ms\n", stdsort_time);
 
     for ( s = sort_definitions; s->sortfn != NULL; s++ )
@@ -220,11 +212,12 @@ int benchmark_sorts( void )
         {
             memcpy(list_sort, list_raw, len*esize);
 
-            start_time = get_time();
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
             (*s->sortfn)(list_sort, len);
-            end_time = get_time();
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
-            sort_time = 1000.0*(end_time - start_time);
+            sort_time = (((double)end_time.tv_sec - start_time.tv_sec)*1e3 \
+                    + ((double)end_time.tv_nsec - start_time.tv_nsec)/1e6);
             if ( cmplist(list_sort, list_stdsort, len, &cmpint) == 0 ) {
                 if (i == 0 || sort_time < min_time) {
                     min_time = sort_time;
