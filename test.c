@@ -198,7 +198,6 @@ int benchmark_sorts( void )
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
     stdsort(list_stdsort, len);
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
-    //stdsort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
     stdsort_time = (((float)end_time.tv_sec - start_time.tv_sec) \
                     + ((float)end_time.tv_nsec - start_time.tv_nsec)/1e9);
     printf("%f\n", stdsort_time);
@@ -215,7 +214,6 @@ int benchmark_sorts( void )
             (*s->sortfn)(list_sort, len);
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
-            //sort_time = ((float)(end_time - start_time))/(CLOCKS_PER_SEC/1000);
             sort_time = (((float)end_time.tv_sec - start_time.tv_sec) \
                     + ((float)end_time.tv_nsec - start_time.tv_nsec)/1e9);
             if ( cmplist(list_sort, list_stdsort, len, &cmpint) == 0 ) {
