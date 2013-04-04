@@ -1,8 +1,8 @@
-== c-sorting
+## c-sorting
 
 Sorting algorithms in C with a test framework.
 
-=== Usage
+### Usage
 
 ./csort
 Run tests for all sorting algorithms
@@ -19,7 +19,7 @@ quicksort2, mergesort, heapsort, inssort, inssort2, inssort3, bubblesort,
 bubblesort2 
 
 
-=== TODO
+### TODO
 * Convert all sorting algorithms to use stdlib qsort style function signature (i.e., arbitrary element size and comparison function) to allow valid comparison between algorithms. Quicksort implementation is currently faster than stdlib because it only sorts ints.
   
 * Take command line parameter for benchmark
