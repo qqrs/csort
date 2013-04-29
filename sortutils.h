@@ -1,23 +1,30 @@
 #ifndef SORTUTILS_H
 #define SORTUTILS_H
 
-int cmplist(const int *a, const int *b, size_t size,
-                int (*cmp)(const void*,const void*));
-int compare(const int *a, const int *b);
-void swap(int *a, int *b);
-void printl(int *list, uint32_t size);
+#include "sort.h"
+
+int cmplist(const void *a, const void *b, uint32_t len, uint32_t esize, 
+            cmpfn_t cmp);
+
+//int compare(const int *a, const int *b);
+void swap(int *a, int *b, uint32_t esize);
+void copy(int *dest, int *src, uint32_t esize);
+void printl( int *base, uint32_t len, uint32_t esize );
 
 // sort using stdlib qsort
-void stdsort(int *list, uint32_t size);
+void stdsort( int *base, uint32_t len, uint32_t esize, cmpfn_t cmp );
 
 int cmpint(const void *a, const void *b);
+int cmpint64(const void *a, const void *b);
+int cmp10ints(const void *a, const void *b);
+int cmpstr(const void *a, const void *b);
 
 
 #ifdef DEBUG
 #define dbgprintl printl
 #define dbgprintf printf
 #else
-#define dbgprintl(a,b) do {} while (0)
+#define dbgprintl(a,b,c) do {} while (0)
 #define dbgprintf(...) do {} while (0)
 #endif
 

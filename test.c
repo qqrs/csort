@@ -19,10 +19,10 @@ struct sortdef_s {
 
 #define SORT_DEF(x) { &(x), #x }
 static struct sortdef_s sort_definitions[] = {
-    SORT_DEF( quicksort         ),
-    SORT_DEF( mergesort         ),
-    SORT_DEF( heapsort          ),
-    SORT_DEF( inssort           ),
+    /*SORT_DEF( quicksort         ),*/
+    /*SORT_DEF( mergesort         ),*/
+    /*SORT_DEF( heapsort          ),*/
+    /*SORT_DEF( inssort           ),*/
     SORT_DEF( bubblesort        ),
     { NULL, NULL },
 };
@@ -49,15 +49,21 @@ static int test_rand    [] = {7,9,3,2,6,7,1,4,9,4,1,2,7,2,8,4,
                               8,3,3,7,7,2,8,3,4,9,3,7,5,4,4,6,
                               5,9,5,1,3,1,1,4,7,2,1,8,3,1,5,2};
 
-#define TEST_ITEM(x)  { x, #x, (sizeof(x)/sizeof(x[0])), sizeof(x[0]), &cmpint }
+static int64_t test_int64 [] = {6,5,4,3,2,1};
+static char *test_str [] = {"the", "quick", "brown", "fox", "jumped"};
+
+#define TEST_ITEM_INT(x)  { x, #x, (sizeof(x)/sizeof(x[0])), sizeof(x[0]), &cmpint }
+#define TEST_ITEM(x,cmp)  { x, #x, (sizeof(x)/sizeof(x[0])), sizeof(x[0]), (cmp) }
 static struct testitem_s test_cases[] = {
-    TEST_ITEM( test_even     ),
-    TEST_ITEM( test_odd      ),
-    TEST_ITEM( test_pow2     ),
-    TEST_ITEM( test_sorted   ),
-    TEST_ITEM( test_dup      ),
-    TEST_ITEM( test_ilv      ),
-    TEST_ITEM( test_rand     ),
+    TEST_ITEM_INT( test_even     ),
+    TEST_ITEM_INT( test_odd      ),
+    TEST_ITEM_INT( test_pow2     ),
+    TEST_ITEM_INT( test_sorted   ),
+    TEST_ITEM_INT( test_dup      ),
+    TEST_ITEM_INT( test_ilv      ),
+    TEST_ITEM_INT( test_rand     ),
+    TEST_ITEM( test_int64, &cmpint64 ),
+    TEST_ITEM( test_str, &cmpstr ),
     {NULL, NULL, 0, 0, NULL}
 };
 
@@ -103,21 +109,22 @@ int test_sort(sortfn_t sortfn)
         memcpy( list_sort, test->list, list_size );
         memcpy( list_stdsort, test->list, list_size );
 
-        dbgprintl(list_sort, test->len );
-        (*sortfn)(list_sort, test->len );
-        dbgprintl(list_sort, test->len );
+        dbgprintl(list_sort, test->len, test->esize);
+        (*sortfn)(list_sort, test->len, test->esize, test->cmp);
+        dbgprintl(list_sort, test->len, test->esize);
 
-        stdsort(list_stdsort, test->len );
+        stdsort(list_stdsort, test->len, test->esize, test->cmp);
 
-        if ( cmplist(list_sort, list_stdsort, test->len, test->cmp) != 0 ) {
+        if ( cmplist(list_sort, list_stdsort, test->len, test->esize, 
+                                                        test->cmp) != 0 ) {
             failures++;
             if (failures == 1) {
                 printf("\n");
             }
             printf("FAIL: ");
-            printl(test->list, test->len);
+            printl(test->list, test->len, test->esize);
             printf("   >: ");
-            printl(list_sort, test->len);
+            printl(list_sort, test->len, test->esize);
         }
     }
 
@@ -148,23 +155,25 @@ int test_sorts( void )
 
 
 // run benchmark for all sort functions
-#define MAX_TEST_DATA 100000
-#define TEST_REPEAT 3
-int benchmark_sorts( void )
+int benchmark_sorts( uint32_t len, uint32_t esize, uint32_t num_repeat, 
+                    cmpfn_t cmp )
 {
     uint32_t i;
+    size_t size;
+    uint32_t buf_len;
     struct sortdef_s *s;
-    uint32_t len, esize;
-    int *list_raw, *list_sort, *list_stdsort;
+    void *list_raw, *list_sort, *list_stdsort;
     struct timespec start_time, end_time; 
     double min_time, sort_time, stdsort_time;
 
-    // allocate a buffer for test data
-    len = MAX_TEST_DATA;
-    esize = sizeof(int);
-    list_raw = malloc(len*esize);
-    list_sort = malloc(len*esize);
-    list_stdsort = malloc(len*esize);
+    // allocate a buffer for test data, multiple of int size
+    size = len * esize;
+    size += size % sizeof(int);
+    buf_len = size / sizeof(int);
+
+    list_raw = malloc(size);
+    list_sort = malloc(size);
+    list_stdsort = malloc(size);
     if (!list_raw || !list_sort || !list_stdsort) {
         free(list_raw);
         free(list_sort);
@@ -174,16 +183,16 @@ int benchmark_sorts( void )
 
     // generate test data
     srand(398149);
-    for (uint32_t i = 0; i < len; i++)
+    for (uint32_t i = 0; i < buf_len; i++)
     {
-        list_raw[i] = rand();
+        ((int *)list_raw)[i] = rand();
     }
 
     // sort using stdlib qsort
     printf("%16.16s: ", "stdlib qsort");
     memcpy(list_stdsort, list_raw, len*esize);
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
-    stdsort(list_stdsort, len);
+    stdsort(list_stdsort, len, esize, cmp);
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
     stdsort_time = (((double)end_time.tv_sec - start_time.tv_sec)*1e3 \
                     + ((double)end_time.tv_nsec - start_time.tv_nsec)/1e6);
@@ -195,17 +204,17 @@ int benchmark_sorts( void )
     {
         printf("%16.16s: ", s->name);
 
-        for ( i = 0; i < TEST_REPEAT; i++ )
+        for ( i = 0; i < num_repeat; i++ )
         {
             memcpy(list_sort, list_raw, len*esize);
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
-            (*s->sortfn)(list_sort, len);
+            (*s->sortfn)(list_sort, len, esize, cmp);
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
             sort_time = (((double)end_time.tv_sec - start_time.tv_sec)*1e3 \
                     + ((double)end_time.tv_nsec - start_time.tv_nsec)/1e6);
-            if ( cmplist(list_sort, list_stdsort, len, &cmpint) == 0 ) {
+            if ( cmplist(list_sort, list_stdsort, len, esize, cmp) == 0 ) {
                 if (i == 0 || sort_time < min_time) {
                     min_time = sort_time;
                 }
@@ -214,7 +223,7 @@ int benchmark_sorts( void )
             }
         }
 
-        if (i != TEST_REPEAT) {
+        if (i != num_repeat) {
             printf("FAIL\n");
         } else {
             printf("%6.2f ms  %.2f\n", min_time, min_time/stdsort_time);
@@ -265,18 +274,19 @@ void test_cmdline_list(int argc, char *argv[])
     memcpy(list_sort, list, list_size*sizeof(int));
     memcpy(list_stdsort, list, list_size*sizeof(int));
 
-    (*s->sortfn)(list_sort, list_size);
-    stdsort(list_stdsort, list_size);
+    (*s->sortfn)(list_sort, list_size, sizeof(int), &cmpint);
+    stdsort(list_stdsort, list_size, sizeof(int), &cmpint);
 
     dbgprintf("\n\n");
     dbgprintf("unsorted:        ");
-    dbgprintl(list, list_size);
+    dbgprintl(list, list_size, sizeof(int));
     dbgprintf("stdlib qsort:    ");
-    dbgprintl(list_stdsort, list_size);
+    dbgprintl(list_stdsort, list_size, sizeof(int));
     dbgprintf("sort-under-test: ");
-    dbgprintl(list_sort, list_size);
+    dbgprintl(list_sort, list_size, sizeof(int));
 
-    if ( cmplist(list_sort, list_stdsort, list_size, &cmpint) == 0 ) {
+    if (cmplist(list_sort, list_stdsort, list_size, 
+                sizeof(int), &cmpint) == 0 ) {
         printf("sort OK\n");
     } else {
         printf("sort FAILED\n");

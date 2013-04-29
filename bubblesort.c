@@ -3,27 +3,31 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "sort.h"
 #include "sortutils.h"
 
-void bubblesort( int *base, uint32_t size )
+void bubblesort( void *base, uint32_t len, uint32_t esize, cmpfn_t cmp )
 {
     uint32_t i,j;
+    void *a, *b;
     bool swapped;
 
-    if ( size <= 1 ) {
+    if ( len <= 1 ) {
         return;
     }
 
-    for ( i = 1; i < size; i++ )
+    for ( i = 1; i < len; i++ )
     {
         swapped = false;
-        for ( j = 0; j < size-i; j++ )
+        for ( j = 0; j < len-i; j++ )
         {
-            if ( compare( &base[j], &base[j+1] ) > 0 ) {
-                swap(&base[j], &base[j+1]);
+            a = base + j*esize;
+            b = a + esize;
+            if ( (*cmp)(a, b) > 0 ) {
+                swap(a, b, esize);
                 swapped = true;
             }
-            dbgprintl(base, size);
+            dbgprintl(base, len, esize);
         }
         dbgprintf("\n");
 

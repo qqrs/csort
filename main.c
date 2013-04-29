@@ -11,15 +11,19 @@ int main(int argc, char *argv[])
     if ( argc <= 0 ) {
         exit(EXIT_FAILURE);
     } else if ( argc == 1 ) {
+        // $ csort
         // run tests defined in test.c
         test_sorts();
     } else if ( argc == 2 ) {
+        // $ csort benchmark
         if ( strcmp(argv[1], "benchmark") != 0 ) {
             exit(EXIT_FAILURE);
         }
-        benchmark_sorts();
+        //benchmark_sorts(10000, sizeof(int), 3, &cmpint);
+        //benchmark_sorts(1000, sizeof(int64_t), 1, &cmpint64);
+        benchmark_sorts(100, 10*sizeof(int), 1, &cmp10ints);
     } else {
-        // csort <sort_function> <list...>
+        // $ csort <sort_function> <list...>
         test_cmdline_list(argc, argv);
     }
 

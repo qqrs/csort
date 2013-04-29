@@ -8,10 +8,10 @@ CSOURCE = 	main.c \
 		  	test.c \
 		  	sortutils.c \
 		  	bubblesort.c \
-		  	insertion_sort.c \
-			quicksort.c \
-			mergesort.c \
-			heapsort.c
+		  	#insertion_sort.c \
+			#quicksort.c \
+			#mergesort.c \
+			#heapsort.c
 
 CINCLUDE = sort.h sortutils.h
 
