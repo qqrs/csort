@@ -8,7 +8,7 @@ CSOURCE = 	main.c \
 		  	test.c \
 		  	sortutils.c \
 		  	bubblesort.c \
-		  	#insertion_sort.c \
+		  	insertion_sort.c \
 			#quicksort.c \
 			#mergesort.c \
 			#heapsort.c
