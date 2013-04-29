@@ -14,6 +14,9 @@ int main(int argc, char *argv[])
         // run tests defined in test.c
         test_sorts();
     } else if ( argc == 2 ) {
+        if ( strcmp(argv[1], "benchmark") != 0 ) {
+            exit(EXIT_FAILURE);
+        }
         benchmark_sorts();
     } else {
         // csort <sort_function> <list...>
