@@ -9,7 +9,7 @@ void inssort( int *base, uint32_t size )
     uint32_t i,j;
     int temp;
 
-    if ( size < 2 ) {
+    if ( size <= 1 ) {
         return;
     }
 
@@ -29,56 +29,4 @@ void inssort( int *base, uint32_t size )
 
 }
 
-
-void inssort2( int *base, uint32_t size )
-{
-    uint32_t i;
-    int32_t j;
-    int temp;
-
-    if ( size < 2 ) {
-        return;
-    }
-
-    for ( i = 1; i < size; i++ )
-    {
-        temp = base[i];
-        j = i-1;
-        while ( j >= 0 && compare( &temp, &base[j] ) < 0 ) 
-        {
-            base[j+1] = base[j];
-            j--;
-        }
-
-        base[j+1] = temp;
-        dbgprintl(base, size);
-    }
-
-}
-
-void inssort3( int *base, uint32_t size )
-{
-    int temp;
-    int *a, *end, *hole;
-    end = base + size - 1;
-
-    if ( size < 2 ) {
-        return;
-    }
-
-    for ( a = base + 1; a <= end; a++ )
-    {
-        temp = *a;
-        hole = a-1;
-        while ( hole >= base && compare( &temp, hole ) < 0 ) 
-        {
-            *(hole+1) = *hole;
-            hole--;
-        }
-
-        *(hole+1) = temp;
-        dbgprintl(base, size);
-    }
-
-}
 

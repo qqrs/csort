@@ -1,54 +1,36 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "sortutils.h"
 
 void bubblesort( int *base, uint32_t size )
 {
     uint32_t i,j;
+    bool swapped;
 
-    if ( size < 2 ) {
+    if ( size <= 1 ) {
         return;
     }
 
-    for ( i = 0; i < size-1; i++ )
+    for ( i = 1; i < size; i++ )
     {
-        for ( j = 0; j < size-i-1; j++ )
+        swapped = false;
+        for ( j = 0; j < size-i; j++ )
         {
             if ( compare( &base[j], &base[j+1] ) > 0 ) {
                 swap(&base[j], &base[j+1]);
+                swapped = true;
             }
             dbgprintl(base, size);
         }
-        // if no swaps on this sweep, break loop
         dbgprintf("\n");
+
+        if (!swapped) {
+            return;
+        }
     }
 
 }
 
-
-void bubblesort2( int *base, uint32_t size )
-{
-    int *a, *b, *end;
-
-    if ( size < 2 ) {
-        return;
-    }
-    end = base + size - 1;
-
-    while (end != base)
-    {
-        for ( a = base, b = base+1; b <= end; a++, b++ )
-        {
-            if ( compare( a, b ) > 0 ) {
-                swap( a, b );
-            }
-            dbgprintl(base, size);
-        }
-        // if no swaps on this sweep, break loop
-        dbgprintf("\n");
-        end--;
-    }
-
-}

@@ -20,14 +20,10 @@ struct sortdef_s {
 #define SORT_DEF(x) { &(x), #x }
 static struct sortdef_s sort_definitions[] = {
     SORT_DEF( quicksort         ),
-    SORT_DEF( quicksort2        ),
     SORT_DEF( mergesort         ),
     SORT_DEF( heapsort          ),
     SORT_DEF( inssort           ),
-    SORT_DEF( inssort2          ),
-    SORT_DEF( inssort3          ),
     SORT_DEF( bubblesort        ),
-    SORT_DEF( bubblesort2       ),
     { NULL, NULL },
 };
 
@@ -67,12 +63,6 @@ static struct testitem_s test_cases[] = {
 
 // =============================================================================
 
-// TODO: use stack buffers rather than allocating on heap for consistent timing?
-//       or build timing into the test framework?
-//#define MAX_LIST_SIZE   64*sizeof(int)
-//static uint8_t buf_sort[MAX_LIST_SIZE];
-//static uint8_t buf_stdsort[MAX_LIST_SIZE];
-
 // run test cases for a single sort function
 int test_sort(sortfn_t sortfn)
 {
@@ -95,7 +85,6 @@ int test_sort(sortfn_t sortfn)
     for (test = test_cases; test->list != NULL; test++)
     {
         list_size = test->len * test->esize;
-        //assert(list_size <= MAX_LIST_SIZE);
 
         if (list_size > list_sort_size) {
             list_sort = realloc(list_sort, list_size);
@@ -120,11 +109,7 @@ int test_sort(sortfn_t sortfn)
 
         stdsort(list_stdsort, test->len );
 
-        //if ( memcmp(list_sort, list_stdsort, list_size) == 0 ) 
-        if ( cmplist(list_sort, list_stdsort, test->len, test->cmp) == 0 ) {
-            // printf("OK:   ");
-            // printl(test->list, test->len);
-        } else {
+        if ( cmplist(list_sort, list_stdsort, test->len, test->cmp) != 0 ) {
             failures++;
             if (failures == 1) {
                 printf("\n");
@@ -204,6 +189,8 @@ int benchmark_sorts( void )
                     + ((double)end_time.tv_nsec - start_time.tv_nsec)/1e6);
     printf("%6.2f ms\n", stdsort_time);
 
+    // for each defined sort algorithm, sort and show the best time of several
+    // repetitions using the same data set
     for ( s = sort_definitions; s->sortfn != NULL; s++ )
     {
         printf("%16.16s: ", s->name);
@@ -278,7 +265,6 @@ void test_cmdline_list(int argc, char *argv[])
     memcpy(list_sort, list, list_size*sizeof(int));
     memcpy(list_stdsort, list, list_size*sizeof(int));
 
-    //sort_under_test(list_sort, list_size);
     (*s->sortfn)(list_sort, list_size);
     stdsort(list_stdsort, list_size);
 
@@ -290,7 +276,6 @@ void test_cmdline_list(int argc, char *argv[])
     dbgprintf("sort-under-test: ");
     dbgprintl(list_sort, list_size);
 
-    //if ( memcmp(list_sort, list_stdsort, list_size*sizeof(int)) == 0 ) {
     if ( cmplist(list_sort, list_stdsort, list_size, &cmpint) == 0 ) {
         printf("sort OK\n");
     } else {
