@@ -9,7 +9,7 @@ CSOURCE = 	main.c \
 		  	sortutils.c \
 		  	bubblesort.c \
 		  	insertion_sort.c \
-			#quicksort.c \
+			quicksort.c \
 			#mergesort.c \
 			#heapsort.c
 

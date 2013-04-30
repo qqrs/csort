@@ -19,7 +19,7 @@ struct sortdef_s {
 
 #define SORT_DEF(x) { &(x), #x }
 static struct sortdef_s sort_definitions[] = {
-    /*SORT_DEF( quicksort         ),*/
+    SORT_DEF( quicksort         ),
     /*SORT_DEF( mergesort         ),*/
     /*SORT_DEF( heapsort          ),*/
     SORT_DEF( inssort           ),
