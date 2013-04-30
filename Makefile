@@ -3,6 +3,7 @@ CFLAGS=-Wall -Wextra -g -ggdb -std=c99 -O2 -D_POSIX_C_SOURCE=199309L
 POSTFLAGS=-lrt 
 BINARY = csort
 DEBUG_BINARY = csort-debug
+STATS_BINARY = csort-stats
 
 CSOURCE = 	main.c \
 		  	test.c \
@@ -22,6 +23,9 @@ csort: $(CSOURCE) $(CINCLUDE)
 
 debug: $(CSOURCE) $(CINCLUDE)
 	$(CC) $(CFLAGS) -DDEBUG -o $(DEBUG_BINARY) $(CSOURCE) $(POSTFLAGS)
+
+stats: $(CSOURCE) $(CINCLUDE)
+	$(CC) $(CFLAGS) -DSORT_STATS -o $(STATS_BINARY) $(CSOURCE) $(POSTFLAGS)
 
 .PHONY:clean
 clean:

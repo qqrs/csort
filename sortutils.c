@@ -5,9 +5,9 @@
 
 #include "sortutils.h"
 
-#ifdef DEBUG
-int sortutils_compare_count = 0;
-int sortutils_copy_count = 0;
+#ifdef SORT_STATS
+static int sortutils_compare_count = 0;
+static int sortutils_copy_count = 0;
 #endif
 
 // compare two lists of same length
@@ -33,7 +33,7 @@ void stdsort( int *base, uint32_t len, uint32_t esize, cmpfn_t cmp )
 
 int cmpint(const void *a, const void *b)
 {
-#ifdef DEBUG
+#ifdef SORT_STATS
     sortutils_compare_count++;
 #endif
     if ( *(int *)a < *(int *)b ) {
@@ -47,7 +47,7 @@ int cmpint(const void *a, const void *b)
 
 int cmpint64(const void *a, const void *b)
 {
-#ifdef DEBUG
+#ifdef SORT_STATS
     sortutils_compare_count++;
 #endif
     if ( *(int64_t *)a < *(int64_t *)b ) {
@@ -61,7 +61,7 @@ int cmpint64(const void *a, const void *b)
 
 int cmp10ints(const void *a, const void *b)
 {
-#ifdef DEBUG
+#ifdef SORT_STATS
     sortutils_compare_count++;
 #endif
     for ( uint32_t i = 0; i < 10; i++ )
@@ -80,7 +80,7 @@ int cmp10ints(const void *a, const void *b)
 
 int cmpstr(const void *a, const void *b)
 {
-#ifdef DEBUG
+#ifdef SORT_STATS
     sortutils_compare_count++;
 #endif
     return strcmp(*(char **)a, *(char **)b);
@@ -88,7 +88,7 @@ int cmpstr(const void *a, const void *b)
 
 void s_memswap(void *a, void *b, void *temp, uint32_t esize)
 {
-#ifdef DEBUG
+#ifdef SORT_STATS
     sortutils_copy_count += 3;
 #endif
 
@@ -99,13 +99,26 @@ void s_memswap(void *a, void *b, void *temp, uint32_t esize)
 
 void s_memcpy(void *dest, void *src, uint32_t esize)
 {
-#ifdef DEBUG
+#ifdef SORT_STATS
     sortutils_copy_count++;
 #endif
 
     memcpy(dest, src, esize);
 }
 
+#ifdef SORT_STATS
+void s_reset_stats()
+{
+    sortutils_compare_count = 0;
+    sortutils_copy_count = 0;
+}
+
+void s_get_stats(int *compare_count, int *copy_count)
+{
+    *compare_count = sortutils_compare_count;
+    *copy_count = sortutils_copy_count;
+}
+#endif
 
 // print list
 void printl( int *base, uint32_t len, uint32_t esize )

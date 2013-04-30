@@ -19,9 +19,7 @@ int main(int argc, char *argv[])
         if ( strcmp(argv[1], "benchmark") != 0 ) {
             exit(EXIT_FAILURE);
         }
-        //benchmark_sorts(10000, sizeof(int), 3, &cmpint);
-        //benchmark_sorts(1000, sizeof(int64_t), 1, &cmpint64);
-        benchmark_sorts(100, 10*sizeof(int), 1, &cmp10ints);
+        benchmark_sorts(30000, sizeof(int), 3, &cmpint);
     } else {
         // $ csort <sort_function> <list...>
         test_cmdline_list(argc, argv);

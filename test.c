@@ -165,6 +165,10 @@ int benchmark_sorts( uint32_t len, uint32_t esize, uint32_t num_repeat,
     void *list_raw, *list_sort, *list_stdsort;
     struct timespec start_time, end_time; 
     double min_time, sort_time, stdsort_time;
+#ifdef SORT_STATS
+    int compare_count, copy_count;
+#endif
+
 
     // allocate a buffer for test data, multiple of int size
     size = len * esize;
@@ -189,6 +193,12 @@ int benchmark_sorts( uint32_t len, uint32_t esize, uint32_t num_repeat,
     }
 
     // sort using stdlib qsort
+#ifdef SORT_STATS
+            s_reset_stats();
+    printf("                      time      rel        cmp       copy\n");
+#else
+    printf("                      time      rel\n");
+#endif
     printf("%16.16s: ", "stdlib qsort");
     memcpy(list_stdsort, list_raw, len*esize);
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
@@ -196,7 +206,14 @@ int benchmark_sorts( uint32_t len, uint32_t esize, uint32_t num_repeat,
 	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
     stdsort_time = (((double)end_time.tv_sec - start_time.tv_sec)*1e3 \
                     + ((double)end_time.tv_nsec - start_time.tv_nsec)/1e6);
-    printf("%6.2f ms\n", stdsort_time);
+#ifdef SORT_STATS
+            s_get_stats(&compare_count, &copy_count);
+            printf("%6.2f ms  %6.2f %10d\n",
+                    stdsort_time, stdsort_time/stdsort_time, compare_count);
+#else
+            printf("%6.2f ms  %6.2f\n",
+                    stdsort_time, stdsort_time/stdsort_time);
+#endif
 
     // for each defined sort algorithm, sort and show the best time of several
     // repetitions using the same data set
@@ -208,9 +225,15 @@ int benchmark_sorts( uint32_t len, uint32_t esize, uint32_t num_repeat,
         {
             memcpy(list_sort, list_raw, len*esize);
 
+#ifdef SORT_STATS
+            s_reset_stats();
+#endif
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
             (*s->sortfn)(list_sort, len, esize, cmp);
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
+#ifdef SORT_STATS
+            s_get_stats(&compare_count, &copy_count);
+#endif
 
             sort_time = (((double)end_time.tv_sec - start_time.tv_sec)*1e3 \
                     + ((double)end_time.tv_nsec - start_time.tv_nsec)/1e6);
@@ -226,7 +249,13 @@ int benchmark_sorts( uint32_t len, uint32_t esize, uint32_t num_repeat,
         if (i != num_repeat) {
             printf("FAIL\n");
         } else {
-            printf("%6.2f ms  %.2f\n", min_time, min_time/stdsort_time);
+#ifdef SORT_STATS
+            printf("%6.2f ms  %6.2f %10d %10d\n", 
+                    min_time, min_time/stdsort_time, compare_count, copy_count);
+#else
+            printf("%6.2f ms  %6.2f\n", 
+                    min_time, min_time/stdsort_time);
+#endif
         }
 
 
