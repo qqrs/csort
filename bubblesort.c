@@ -11,6 +11,12 @@ void bubblesort( void *base, uint32_t len, uint32_t esize, cmpfn_t cmp )
     uint32_t i,j;
     void *a, *b;
     bool swapped;
+    void *temp;
+
+    temp = malloc(esize);
+    if (!temp) {
+        exit(EXIT_FAILURE);
+    }
 
     if ( len <= 1 ) {
         return;
@@ -24,7 +30,7 @@ void bubblesort( void *base, uint32_t len, uint32_t esize, cmpfn_t cmp )
             a = base + j*esize;
             b = a + esize;
             if ( (*cmp)(a, b) > 0 ) {
-                swap(a, b, esize);
+                swap(a, b, temp, esize);
                 swapped = true;
             }
             dbgprintl(base, len, esize);
@@ -36,5 +42,6 @@ void bubblesort( void *base, uint32_t len, uint32_t esize, cmpfn_t cmp )
         }
     }
 
+    free(temp);
 }
 

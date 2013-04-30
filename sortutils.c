@@ -103,22 +103,15 @@ int compare(const int *a, const int *b)
 }
 */
 
-void swap(int *a, int *b, uint32_t esize)
+void swap(void *a, void *b, void *temp, uint32_t esize)
 {
-    void *t;
-
 #ifdef DEBUG
     sortutils_copy_count += 3;
 #endif
 
-    t = malloc(esize);
-    if (!t) {
-        exit(EXIT_FAILURE);
-    }
-    memcpy(t, a, esize);
+    memcpy(temp, a, esize);
     memcpy(a, b, esize);
-    memcpy(b, t, esize);
-    free(t);
+    memcpy(b, temp, esize);
 }
 
 /*void swapint(int *a, int *b)
@@ -135,7 +128,7 @@ void swap(int *a, int *b, uint32_t esize)
 }
 */
 
-void copy(int *dest, int *src, uint32_t esize)
+void copy(void *dest, void *src, uint32_t esize)
 {
 #ifdef DEBUG
     sortutils_copy_count++;
