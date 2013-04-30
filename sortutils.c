@@ -86,23 +86,6 @@ int cmpstr(const void *a, const void *b)
     return strcmp(*(char **)a, *(char **)b);
 }
 
-/*
-int compare(const int *a, const int *b)
-{
-#ifdef DEBUG
-    sortutils_compare_count++;
-#endif
-
-    if ( *a < *b ) {
-        return -1;
-    } 
-    if ( *a > *b ) {
-        return 1;
-    } 
-    return 0;
-}
-*/
-
 void s_memswap(void *a, void *b, void *temp, uint32_t esize)
 {
 #ifdef DEBUG
@@ -113,20 +96,6 @@ void s_memswap(void *a, void *b, void *temp, uint32_t esize)
     memcpy(a, b, esize);
     memcpy(b, temp, esize);
 }
-
-/*void swapint(int *a, int *b)
-{
-    int t;
-
-#ifdef DEBUG
-    sortutils_copy_count++;
-#endif
-
-    t = *a;
-    *a = *b;
-    *b = t;
-}
-*/
 
 void s_memcpy(void *dest, void *src, uint32_t esize)
 {
