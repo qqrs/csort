@@ -23,7 +23,7 @@ static void hs_heapify( int *heap, uint32_t size, int parent )
     }
 
     if (max != parent) {
-        swap(&heap[max], &heap[parent]);
+        s_memswap(&heap[max], &heap[parent]);
         hs_heapify(heap, size, max);
     }
 }
@@ -42,8 +42,8 @@ void heapsort( int *base, uint32_t size )
 
     for (int i = size - 1; i >= 2; i--)
     {
-        swap(&base[0], &base[i]);
+        s_memswap(&base[0], &base[i]);
         hs_heapify(base, i, 0);
     }
-    swap(&base[0], &base[1]);
+    s_memswap(&base[0], &base[1]);
 }

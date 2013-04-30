@@ -30,7 +30,7 @@ void bubblesort( void *base, uint32_t len, uint32_t esize, cmpfn_t cmp )
             a = base + j*esize;
             b = a + esize;
             if ( (*cmp)(a, b) > 0 ) {
-                swap(a, b, temp, esize);
+                s_memswap(a, b, temp, esize);
                 swapped = true;
             }
             dbgprintl(base, len, esize);

@@ -7,8 +7,8 @@ int cmplist(const void *a, const void *b, uint32_t len, uint32_t esize,
             cmpfn_t cmp);
 
 //int compare(const int *a, const int *b);
-void swap(void *a, void *b, void *temp, uint32_t esize);
-void copy(void *dest, void *src, uint32_t esize);
+void s_memswap(void *a, void *b, void *temp, uint32_t esize);
+void s_memcpy(void *dest, void *src, uint32_t esize);
 void printl( int *base, uint32_t len, uint32_t esize );
 
 // sort using stdlib qsort

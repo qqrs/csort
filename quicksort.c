@@ -21,7 +21,7 @@ static void qs_sort( void *base, uint32_t len, int left, int right,
     while (left < right)
     {
         pivot = (left+right)/2; 
-        copy(pivot_value, base + pivot*esize, esize);
+        s_memcpy(pivot_value, base + pivot*esize, esize);
 
         i = left;
         j = right;
@@ -34,7 +34,7 @@ static void qs_sort( void *base, uint32_t len, int left, int right,
                 j--;
             }
             if (i > j) break;
-            swap(base + i*esize, base + j*esize, temp, esize);
+            s_memswap(base + i*esize, base + j*esize, temp, esize);
             i++; j--;
         }
 
