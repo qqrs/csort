@@ -11,7 +11,7 @@ CSOURCE = 	main.c \
 		  	insertion_sort.c \
 			quicksort.c \
 			mergesort.c \
-			#heapsort.c
+			heapsort.c
 
 CINCLUDE = sort.h sortutils.h
 

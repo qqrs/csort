@@ -6,44 +6,57 @@
 
 #include "sortutils.h"
 
-static void hs_heapify( int *heap, uint32_t size, int parent )
+static void hs_heapify( void *heap, uint32_t len, int parent, uint32_t esize, 
+                        cmpfn_t cmp, void *temp )
 {
     int left, right, max;
     right = (parent+1) << 1;
     left = right - 1;
 
-    dbgprintl(heap, size);
+    dbgprintl(heap, len, sizeof(int));
 
     max = parent;
-    if ((uint32_t)left < size && heap[parent] < heap[left]) {
+    if ((uint32_t)left < len && 
+            (*cmp)(heap+parent*esize, heap+left*esize) < 0) {
         max = left;
     } 
-    if ((uint32_t)right < size && heap[max] < heap[right]) {
+    if ((uint32_t)right < len && 
+            (*cmp)(heap+max*esize, heap+right*esize) < 0) {
         max = right;
     }
 
     if (max != parent) {
-        s_memswap(&heap[max], &heap[parent]);
-        hs_heapify(heap, size, max);
+        s_memswap(heap+(size_t)max*esize, heap+(size_t)parent*esize, temp, esize);
+        hs_heapify(heap, len, max, esize, cmp, temp);
     }
 }
 
-static void hs_buildheap( int *heap, uint32_t size )
+static void hs_buildheap( void *heap, uint32_t len, uint32_t esize, 
+                            cmpfn_t cmp, void *temp )
 {
-    for (int i = size/2 - 1; i >= 0; i--)
+    for (int i = len/2 - 1; i >= 0; i--)
     {
-        hs_heapify(heap, size, i);
+        hs_heapify((int *)heap, len, i, esize, cmp, temp);
     }
 }
 
-void heapsort( int *base, uint32_t size )
+void heapsort( void *base, uint32_t len, uint32_t esize, cmpfn_t cmp )
 {
-    hs_buildheap(base, size);
+    void *temp;
 
-    for (int i = size - 1; i >= 2; i--)
-    {
-        s_memswap(&base[0], &base[i]);
-        hs_heapify(base, i, 0);
+    temp = malloc(esize);
+    if (!temp) {
+        exit(EXIT_FAILURE);
     }
-    s_memswap(&base[0], &base[1]);
+
+    hs_buildheap(base, len, esize, cmp, temp);
+
+    for (int i = len - 1; i >= 2; i--)
+    {
+        s_memswap(base, base+i*esize, temp, esize);
+        hs_heapify((int *)base, i, 0, esize, cmp, temp);
+    }
+
+    s_memswap(base, base+esize, temp, esize);
+    free(temp);
 }
