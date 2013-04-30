@@ -10,7 +10,7 @@ CSOURCE = 	main.c \
 		  	bubblesort.c \
 		  	insertion_sort.c \
 			quicksort.c \
-			#mergesort.c \
+			mergesort.c \
 			#heapsort.c
 
 CINCLUDE = sort.h sortutils.h
